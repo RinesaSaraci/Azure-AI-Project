@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Intelligence Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="hero">
+        <div>
+            <p class="eyebrow">Azure AI Document Intelligence</p>
+            <h1>Document Analysis Dashboard</h1>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- Upload Section -->
+        <section class="panel input-panel">
+
+            <div class="panel-heading">
+                <h2>Upload Document</h2>
+                <p>
+                    Upload invoices, receipts, or ID cards and let Azure
+                    Document Intelligence extract useful information automatically.
+                </p>
+            </div>
+
+            <!-- Document Type -->
+            <select id="docType">
+                <option value="invoice">Invoice</option>
+                <option value="receipt">Receipt</option>
+                <option value="id">ID Card</option>
+            </select>
+
+            <!-- File Input -->
+            <input type="file" id="fileInput">
+
+            <!-- Action Button -->
+            <div class="action-row">
+                <button onclick="analyzeDocument()" type="button">
+                    Analyze with Azure AI
+                </button>
+
+                <p id="loading" class="status-message">
+                    Processing document...
+                </p>
+            </div>
+
+        
+        <!-- Results Section -->
+        <section class="dashboard-grid">
+
+            <article class="panel">
+                <div class="panel-heading">
+                    <h2>Extracted Information</h2>
+                    <p>
+                        View important fields detected by Azure Document Intelligence.
+                    </p>
+                </div>
+
+                <div id="result"></div>
+            </article>
+
+            <article class="panel">
+                <div class="panel-heading">
+                    <h2>How It Works</h2>
+                    <p>
+                        The frontend uploads the selected file to the Express backend.
+                        The backend securely communicates with Azure Document Intelligence
+                        to analyze the document and extract structured data.
+                    </p>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- History Section -->
+        <section class="panel reviews-panel">
+
+            <div class="table-header">
+                <div>
+                    <h2>Document History</h2>
+                    <p>
+                        Review previously analyzed documents and extracted results.
+                    </p>
+                </div>
+
+                <button class="history-btn" onclick="loadHistory()">
+                    Load History
+                </button>
+            </div>
+
+            <div id="history" class="table-wrapper"></div>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
