@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Azure Translator App</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Azure Translator App</h1>
+
+        <textarea
+            id="text"
+            placeholder="Write text here">
+        </textarea>
+
+        <select id="language">
+
+            <option value="fr">French</option>
+
+            <option value="de">German</option>
+
+            <option value="es">Spanish</option>
+
+            <option value="it">Italian</option>
+
+            <option value="sq">Albanian</option>
+
+        </select>
+
+        <button onclick="translateText()">
+            Translate
+        </button>
+
+        <h2 id="result"></h2>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
