@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="hero">
+        <div>
+            <p class="eyebrow">Azure AI Language Concept</p>
+            <h1>Sentiment Analysis Dashboard</h1>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="panel input-panel">
+            <div class="panel-heading">
+                <h2>Review Input</h2>
+                <p>
+                    Use the built-in CSV sample or enter your own reviews.
+                    Put one review on each line before running Azure analysis.
+                </p>
+            </div>
+
+            <textarea
+                id="reviewInput"
+                placeholder="Loading sample CSV reviews..."></textarea>
+
+            <div class="action-row">
+                <button id="analyzeButton" type="button">
+                    Analyze with Azure AI Language
+                </button>
+                <p id="statusMessage" class="status-message"></p>
+            </div>
+        </section>
+
+        <section class="summary-grid">
+            <article class="summary-card">
+                <span>Total Reviews</span>
+                <strong id="totalReviews">0</strong>
+            </article>
+
+            <article class="summary-card positive">
+                <span>Positive</span>
+                <strong id="positiveCount">0</strong>
+            </article>
+
+            <article class="summary-card negative">
+                <span>Negative</span>
+                <strong id="negativeCount">0</strong>
+            </article>
+
+            <article class="summary-card neutral">
+                <span>Neutral</span>
+                <strong id="neutralCount">0</strong>
+            </article>
+        </section>
+
+        <section class="dashboard-grid">
+            <article class="panel">
+                <div class="panel-heading">
+                    <h2>Sentiment Distribution</h2>
+                    <p>Positive, negative, and neutral review labels.</p>
+                </div>
+                <canvas id="sentimentChart"></canvas>
+            </article>
+
+            <article class="panel">
+                <div class="panel-heading">
+                    <h2>Common Key Phrases</h2>
+                    <p>Key phrases extracted by Azure AI Language.</p>
+                </div>
+                <canvas id="phraseChart"></canvas>
+            </article>
+        </section>
+
+        <section class="dashboard-grid">
+            <article class="panel">
+                <div class="panel-heading">
+                    <h2>Named Entities</h2>
+                    <p>People, places, products, and organizations found by Azure.</p>
+                </div>
+                <div id="entityList" class="entity-list"></div>
+            </article>
+
+            <article class="panel">
+                <div class="panel-heading">
+                    <h2>How It Works</h2>
+                    <p>
+                        The frontend sends reviews to the Express backend. The backend
+                        keeps the API key private and calls Azure AI Language for
+                        sentiment analysis, key phrase extraction, and entity recognition.
+                    </p>
+                </div>
+            </article>
+        </section>
+
+        <section class="panel reviews-panel">
+            <div class="table-header">
+                <div>
+                    <h2>Reviews Table</h2>
+                    <p>Search customer reviews and inspect their sentiment labels.</p>
+                </div>
+
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search reviews...">
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Review Text</th>
+                            <th>Sentiment</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reviewsTable"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

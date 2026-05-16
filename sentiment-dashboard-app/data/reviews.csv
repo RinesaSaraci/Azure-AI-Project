@@ -1,0 +1,21 @@
+review_text,sentiment
+"The mobile app is easy to use and the support team answered my question quickly.",Positive
+"Delivery was late and the package arrived damaged.",Negative
+"The product works as expected but the setup guide could be clearer.",Neutral
+"I love the fast checkout process and clean website design.",Positive
+"Customer service at the Berlin branch was friendly and professional.",Positive
+"The new update made the app slower on my Samsung phone.",Negative
+"Microsoft Teams integration helped our group communicate better.",Positive
+"The price is acceptable, but I expected more features.",Neutral
+"My order from Pristina arrived on time and everything was correct.",Positive
+"The chatbot did not understand my problem and gave repeated answers.",Negative
+"The dashboard is simple and useful for tracking weekly performance.",Positive
+"I visited the London office and the staff were helpful.",Positive
+"The headphones have average sound quality for the price.",Neutral
+"Payment failed twice even though my Visa card was valid.",Negative
+"Azure AI examples in the course helped me understand sentiment analysis.",Positive
+"The response time was slow during the evening.",Negative
+"The interface looks modern, but some buttons are confusing.",Neutral
+"Their Instagram announcement was clear and informative.",Positive
+"The refund process took too long and nobody contacted me.",Negative
+"Overall the experience was fine, nothing special.",Neutral
