@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Azure Translator App</title>
 
@@ -11,36 +15,114 @@
 
 <body>
 
-    <div class="container">
+    <header class="top-bar">
 
-        <h1>Azure Translator App</h1>
+        <div>
 
-        <textarea
-            id="text"
-            placeholder="Write text here">
-        </textarea>
+            <p class="eyebrow">Microsoft Azure AI</p>
 
-        <select id="language">
+            <h1>Real-time Language Translator</h1>
 
-            <option value="fr">French</option>
+        </div>
 
-            <option value="de">German</option>
+        <nav>
 
-            <option value="es">Spanish</option>
+            <a href="#translator">Translator</a>
 
-            <option value="it">Italian</option>
+            <a href="#history">History</a>
 
-            <option value="sq">Albanian</option>
+        </nav>
 
-        </select>
+    </header>
 
-        <button onclick="translateText()">
-            Translate
-        </button>
+    <main class="container">
 
-        <h2 id="result"></h2>
+        <section class="hero-card" id="translator">
 
-    </div>
+            <div class="section-heading">
+
+                <p class="eyebrow">Translate instantly</p>
+
+                <h2>Enter text and choose languages</h2>
+
+                <p>
+                    This app uses Azure Translator and stores successful translations
+                    in a local SQLite database.
+                </p>
+
+            </div>
+
+            <div class="language-row">
+
+                <label>
+                    From
+                    <select id="sourceLanguage">
+                        <option value="auto">Detect language</option>
+                        <option value="en">English</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="es">Spanish</option>
+                        <option value="it">Italian</option>
+                        <option value="sq">Albanian</option>
+                    </select>
+                </label>
+
+                <label>
+                    To
+                    <select id="targetLanguage">
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="es">Spanish</option>
+                        <option value="it">Italian</option>
+                        <option value="sq">Albanian</option>
+                        <option value="en">English</option>
+                    </select>
+                </label>
+
+            </div>
+
+            <label for="text" class="input-label">
+                Text to translate
+            </label>
+
+            <textarea
+                id="text"
+                placeholder="Write text here..."></textarea>
+
+            <button id="translateButton" type="button">
+                Translate
+            </button>
+
+            <p id="statusMessage" class="status-message"></p>
+
+            <div class="result-card">
+
+                <p class="eyebrow">Translation result</p>
+
+                <h3 id="result">Your translation will appear here.</h3>
+
+            </div>
+
+        </section>
+
+        <section class="history-card" id="history">
+
+            <div class="section-heading">
+
+                <p class="eyebrow">Saved translations</p>
+
+                <h2>Translation History</h2>
+
+            </div>
+
+            <div id="historyList" class="history-list">
+                <p class="empty-state">No translations saved yet.</p>
+            </div>
+
+        </section>
+
+    </main>
+
 
     <script src="script.js"></script>
 

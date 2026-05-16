@@ -3,8 +3,13 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const {
+    saveTranslation,
+    getTranslationHistory
+} = require('./database');
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
@@ -16,22 +21,48 @@ app.post('/translate', async (req, res) => {
 
     try {
 
-        const text = req.body.text;
+        const text = req.body.text?.trim();
 
-        const language = req.body.language;
+        const sourceLanguage =
+            req.body.sourceLanguage || 'auto';
+
+        const targetLanguage =
+            req.body.targetLanguage || req.body.language;
+
+        if (!text || !targetLanguage) {
+            return res.status(400).json({
+                error: 'Text and target language are required'
+            });
+        }
+
+        if (
+            !process.env.AZURE_ENDPOINT ||
+            !process.env.AZURE_KEY ||
+            !process.env.AZURE_REGION
+        ) {
+            return res.status(500).json({
+                error: 'Azure Translator environment variables are missing'
+            });
+        }
+
+        const params = {
+            'api-version': '3.0',
+            'to': targetLanguage
+        };
+
+        if (sourceLanguage !== 'auto') {
+            params.from = sourceLanguage;
+        }
 
         const response = await axios({
 
-            baseURL: process.env.AZURE_ENDPOINT,
+            baseURL: process.env.AZURE_ENDPOINT.replace(/\/$/, ''),
 
             url: '/translate',
 
             method: 'post',
 
-            params: {
-                'api-version': '3.0',
-                'to': language
-            },
+            params,
 
             headers: {
 
@@ -56,8 +87,21 @@ app.post('/translate', async (req, res) => {
             .translations[0]
             .text;
 
+        const detectedLanguage =
+            response.data[0].detectedLanguage?.language ||
+            sourceLanguage;
+
+        await saveTranslation({
+            originalText: text,
+            translatedText,
+            sourceLanguage: detectedLanguage,
+            targetLanguage
+        });
+
         res.json({
-            translatedText
+            translatedText,
+            sourceLanguage: detectedLanguage,
+            targetLanguage
         });
 
     } catch (error) {
@@ -72,9 +116,27 @@ app.post('/translate', async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
+app.get('/history', async (req, res) => {
+
+    try {
+
+        const history = await getTranslationHistory();
+
+        res.json(history);
+
+    } catch (error) {
+
+        console.log(error.message);
+
+        res.status(500).json({
+            error: 'Could not load translation history'
+        });
+    }
+});
+
+app.listen(PORT, () => {
 
     console.log(
-        'Server running on port 3000'
+        `Server running on port ${PORT}`
     );
 });

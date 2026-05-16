@@ -1,27 +1,156 @@
-async function translateText(){
+const languageNames = {
+    auto: 'Detected automatically',
+    en: 'English',
+    fr: 'French',
+    de: 'German',
+    es: 'Spanish',
+    it: 'Italian',
+    sq: 'Albanian'
+};
 
-    const text =
-        document.getElementById('text').value;
+const textInput = document.getElementById('text');
+const sourceLanguageSelect = document.getElementById('sourceLanguage');
+const targetLanguageSelect = document.getElementById('targetLanguage');
+const translateButton = document.getElementById('translateButton');
+const resultText = document.getElementById('result');
+const statusMessage = document.getElementById('statusMessage');
+const historyList = document.getElementById('historyList');
 
-    const language =
-        document.getElementById('language').value;
+translateButton.addEventListener('click', translateText);
 
-    const response = await fetch('/translate', {
+loadHistory();
 
-        method:'POST',
+async function translateText() {
 
-        headers:{
-            'Content-Type':'application/json'
-        },
+    const text = textInput.value.trim();
+    const sourceLanguage = sourceLanguageSelect.value;
+    const targetLanguage = targetLanguageSelect.value;
 
-        body:JSON.stringify({
-            text:text,
-            language:language
-        })
-    });
+    if (!text) {
+        showStatus('Please enter text before translating.', 'error');
+        return;
+    }
 
-    const data = await response.json();
+    setLoading(true);
+    showStatus('Translating with Azure Translator...', 'info');
 
-    document.getElementById('result')
-        .innerText = data.translatedText;
+    try {
+
+        const response = await fetch('/translate', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                text,
+                sourceLanguage,
+                targetLanguage
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Translation failed');
+        }
+
+        resultText.innerText = data.translatedText;
+
+        showStatus('Translation completed and saved to history.', 'success');
+
+        await loadHistory();
+
+    } catch (error) {
+
+        resultText.innerText = 'Your translation will appear here.';
+        showStatus(error.message, 'error');
+
+    } finally {
+
+        setLoading(false);
+    }
+}
+
+async function loadHistory() {
+
+    try {
+
+        const response = await fetch('/history');
+        const history = await response.json();
+
+        if (!response.ok) {
+            throw new Error('Could not load translation history');
+        }
+
+        renderHistory(history);
+
+    } catch (error) {
+
+        historyList.innerHTML = `
+            <p class="empty-state">
+                Translation history is not available right now.
+            </p>
+        `;
+    }
+}
+
+function renderHistory(history) {
+
+    if (!history.length) {
+        historyList.innerHTML =
+            '<p class="empty-state">No translations saved yet.</p>';
+        return;
+    }
+
+    historyList.innerHTML = history.map((item) => {
+        const sourceName =
+            languageNames[item.source_language] || item.source_language;
+
+        const targetName =
+            languageNames[item.target_language] || item.target_language;
+
+        return `
+            <article class="history-item">
+                <div>
+                    <p class="history-languages">
+                        ${sourceName} to ${targetName}
+                    </p>
+                    <p class="history-original">${escapeHtml(item.original_text)}</p>
+                    <p class="history-translated">${escapeHtml(item.translated_text)}</p>
+                </div>
+                <time>${formatDate(item.created_at)}</time>
+            </article>
+        `;
+    }).join('');
+}
+
+function setLoading(isLoading) {
+
+    translateButton.disabled = isLoading;
+    translateButton.innerText = isLoading ? 'Translating...' : 'Translate';
+}
+
+function showStatus(message, type) {
+
+    statusMessage.innerText = message;
+    statusMessage.className = `status-message ${type}`;
+}
+
+function formatDate(dateValue) {
+
+    return new Date(dateValue).toLocaleString();
+}
+
+// History entries come from user input, so escape them before inserting HTML.
+function escapeHtml(value) {
+
+    return value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
