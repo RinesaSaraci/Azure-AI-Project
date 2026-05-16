@@ -15,6 +15,7 @@ const translateButton = document.getElementById('translateButton');
 const resultText = document.getElementById('result');
 const statusMessage = document.getElementById('statusMessage');
 const historyList = document.getElementById('historyList');
+const apiBaseUrl = getApiBaseUrl();
 
 translateButton.addEventListener('click', translateText);
 
@@ -36,7 +37,7 @@ async function translateText() {
 
     try {
 
-        const response = await fetch('/translate', {
+        const response = await fetch(getApiUrl('/translate'), {
 
             method: 'POST',
 
@@ -51,10 +52,10 @@ async function translateText() {
             })
         });
 
-        const data = await response.json();
+        const data = await readJsonResponse(response);
 
-        if (!response.ok) {
-            throw new Error(data.error || 'Translation failed');
+        if (!response.ok || data.success === false) {
+            throw new Error(data.details || data.error || 'Translation failed');
         }
 
         resultText.innerText = data.translatedText;
@@ -78,12 +79,14 @@ async function loadHistory() {
 
     try {
 
-        const response = await fetch('/history');
-        const history = await response.json();
+        const response = await fetch(getApiUrl('/history'));
+        const data = await readJsonResponse(response);
 
-        if (!response.ok) {
-            throw new Error('Could not load translation history');
+        if (!response.ok || data.success === false) {
+            throw new Error(data.error || 'Could not load translation history');
         }
+
+        const history = Array.isArray(data) ? data : data.history;
 
         renderHistory(history);
 
@@ -97,9 +100,43 @@ async function loadHistory() {
     }
 }
 
+function getApiBaseUrl() {
+
+    const isServedByBackend =
+        window.location.hostname === 'localhost' &&
+        window.location.port === '3000';
+
+    if (isServedByBackend) {
+        return '';
+    }
+
+    // This keeps the app working if index.html is opened from a preview server.
+    return 'http://localhost:3000';
+}
+
+function getApiUrl(path) {
+
+    return `${apiBaseUrl}${path}`;
+}
+
+async function readJsonResponse(response) {
+
+    const text = await response.text();
+
+    if (!text) {
+        return {};
+    }
+
+    try {
+        return JSON.parse(text);
+    } catch (error) {
+        throw new Error('Server returned an invalid JSON response');
+    }
+}
+
 function renderHistory(history) {
 
-    if (!history.length) {
+    if (!history || !history.length) {
         historyList.innerHTML =
             '<p class="empty-state">No translations saved yet.</p>';
         return;
